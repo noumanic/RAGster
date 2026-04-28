@@ -17,16 +17,6 @@
 
 ---
 
-## Live Preview
-
-The bundled minimalist web UI (served at `http://127.0.0.1:8000/`) talks to the same FastAPI endpoints — ask, ingest, see citations, watch live stats:
-
-![LegalMind RAG — working demo](docs/images/frontend_working_demo.png)
-
-> Real Gemini-backed query against an ingested contract: 5 chunks retrieved, 836 tokens, ~3.8s end-to-end, citation pills `[1] [2]` linked to source documents.
-
----
-
 ## System Architecture
 
 ### 1. Full Ecosystem Architecture
@@ -109,12 +99,12 @@ graph TB
     K8S    --> FASTAPI
     CI     --> DOCKER
 
-    class WEB,API_CLIENT,SLACK                    clientStyle
-    class NGINX,FASTAPI,AUTH                      gatewayStyle
+    class WEB,API_CLIENT,SLACK clientStyle
+    class NGINX,FASTAPI,AUTH gatewayStyle
     class INGEST,CHUNK,EMBED,RETRIEVE,GENERATE,RERANK ragStyle
-    class VECTORDB,DOCDB,CACHE,S3                 storageStyle
-    class LOGS,METRICS,TRACES                     obsStyle
-    class DOCKER,K8S,CI                           infraStyle
+    class VECTORDB,DOCDB,CACHE,S3 storageStyle
+    class LOGS,METRICS,TRACES obsStyle
+    class DOCKER,K8S,CI infraStyle
 ```
 
 ---
@@ -156,7 +146,7 @@ flowchart TD
     STORE -.->|persisted index| VS
 
     class DOC,LOAD,CLEAN,SPLITTER,EMBEDDER,STORE offlineStyle
-    class Q,QE,VS,CHUNKS,PROMPT,LLM,ANS           onlineStyle
+    class Q,QE,VS,CHUNKS,PROMPT,LLM,ANS onlineStyle
 ```
 
 ---
@@ -237,9 +227,9 @@ flowchart LR
     P6 --> DB
     P1 --> OBJ
 
-    class PDF,DOCX,TXT,URL         inputStyle
-    class P1,P2,P3,P4,P5,P6        processStyle
-    class VS2,DB,OBJ               outputStyle
+    class PDF,DOCX,TXT,URL inputStyle
+    class P1,P2,P3,P4,P5,P6 processStyle
+    class VS2,DB,OBJ outputStyle
 ```
 
 ---
@@ -283,7 +273,7 @@ graph LR
 ## Project Structure
 
 ```
-legalMind-rag/
+naive-rag-project/
 ├── src/
 │   ├── ingestion/
 │   │   ├── __init__.py
@@ -327,10 +317,6 @@ legalMind-rag/
 ├── config/
 │   ├── settings.yaml
 │   └── prompts.yaml
-├── web/
-│   └── index.html              # Single-file minimalist frontend
-├── docs/
-│   └── images/                 # README assets (screenshots, diagrams)
 ├── docker-compose.yml
 ├── Dockerfile
 ├── pyproject.toml
