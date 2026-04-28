@@ -1,0 +1,40 @@
+SAMPLE SERVICES AGREEMENT
+
+This Services Agreement ("Agreement") is entered into between Acme Corp ("Client")
+and Beta Consulting LLC ("Consultant") effective January 1, 2026.
+
+1. TERM AND TERMINATION
+This Agreement shall remain in effect for an initial period of twelve (12) months.
+Either party may terminate this Agreement with thirty (30) days' written notice
+to the other party. Upon termination, the Client shall pay all undisputed fees
+for services rendered through the termination date.
+
+2. PAYMENT TERMS
+Client shall pay Consultant within thirty (30) days of receipt of each invoice.
+Late payments shall accrue interest at a rate of 1.5% per month, or the maximum
+rate permitted by law, whichever is lower.
+
+3. CONFIDENTIALITY
+Each party agrees to maintain in strict confidence all non-public information
+disclosed by the other party. This obligation shall survive termination of this
+Agreement for a period of five (5) years.
+
+4. FORCE MAJEURE
+Neither party shall be liable for any failure or delay in performance under this
+Agreement that is due to fire, flood, earthquake, war, terrorism, pandemic,
+governmental action, or other cause beyond such party's reasonable control,
+provided that the affected party gives prompt written notice to the other party.
+
+5. PENALTY CLAUSE
+Should the Consultant fail to deliver agreed-upon milestones by the contractual
+deadline, a penalty of 5% of the total fee per week of delay shall apply, capped
+at 25% of the total contract value.
+
+6. GOVERNING LAW
+This Agreement shall be governed by and construed in accordance with the laws of
+the State of Delaware, without regard to its conflict of law principles.
+
+7. DISPUTE RESOLUTION
+Any disputes arising under this Agreement shall be resolved through binding
+arbitration in Wilmington, Delaware, under the rules of the American Arbitration
+Association.

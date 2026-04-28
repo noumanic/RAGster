@@ -1,0 +1,58 @@
+# config/settings.yaml — Non-secret operational defaults for LegalMind RAG.
+#
+# Secrets (OPENAI_API_KEY, POSTGRES_URL, etc.) live in .env or your secret
+# manager. Values here are for tuning behavior across environments and can be
+# overridden by environment variables of the same name (case-insensitive).
+
+app:
+  name: LegalMind RAG
+  version: 1.0.0
+  environment: development     # development | staging | production
+  debug: false
+  log_level: INFO
+
+openai:
+  embedding_model: text-embedding-ada-002
+  embedding_dimensions: 1536
+  llm_model: gpt-4o
+  llm_temperature: 0.0
+  llm_max_tokens: 2048
+
+chunking:
+  chunk_size: 512
+  chunk_overlap: 64
+  min_chunk_length: 50
+
+retrieval:
+  top_k: 5
+  similarity_threshold: 0.70
+  reranker_enabled: false
+
+vector_store:
+  backend: chroma              # chroma | pinecone
+  chroma_path: ./data/vectorstore
+  chroma_collection_name: legalMind_docs
+  pinecone_index_name: legalMind
+  pinecone_environment: us-east-1-aws
+
+cache:
+  enabled: true
+  ttl_seconds: 3600
+
+storage:
+  raw_docs_path: ./data/raw
+  processed_docs_path: ./data/processed
+  s3_prefix: legalMind/documents/
+
+security:
+  jwt_algorithm: HS256
+  jwt_expire_minutes: 1440
+  allowed_origins:
+    - http://localhost:3000
+
+rate_limit:
+  requests: 100
+  window_seconds: 60
+
+observability:
+  prometheus_enabled: true

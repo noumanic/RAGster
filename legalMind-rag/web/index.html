@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LegalMind</title>
+<style>
+  /* ─────────────  design tokens  ───────────── */
+  :root {
+    --bg: #fafaf9;
+    --bg-soft: #f5f5f4;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+    --text: #0c0a09;
+    --text-2: #292524;
+    --muted: #78716c;
+    --muted-2: #a8a29e;
+    --accent: #0f172a;
+    --accent-hover: #020617;
+    --accent-soft: #f1f5f9;
+    --accent-tint: #e2e8f0;
+    --success: #166534;
+    --success-soft: #f0fdf4;
+    --success-border: #bbf7d0;
+    --error: #991b1b;
+    --error-soft: #fef2f2;
+    --error-border: #fecaca;
+    --warn-dot: #d97706;
+    --healthy-dot: #16a34a;
+    --error-dot: #dc2626;
+    --idle-dot: #a8a29e;
+    --radius: 8px;
+    --radius-sm: 5px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --shadow-focus: 0 0 0 3px rgba(15,23,42,0.08);
+    --t-fast: 120ms cubic-bezier(.4,0,.2,1);
+    --t-med: 220ms cubic-bezier(.4,0,.2,1);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI Variable",
+                 "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body { min-height: 100vh; }
+
+  ::selection { background: var(--accent-tint); }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 24px 72px;
+  }
+
+  /* ─────────────  header  ───────────── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-mark {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: var(--accent);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: -0.02em;
+  }
+  .brand-text h1 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.015em;
+    color: var(--text);
+  }
+  .brand-text .sub {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.2;
+  }
+
+  .health {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .health .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--idle-dot);
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  .health.healthy .dot { background: var(--healthy-dot); animation: pulse-dot 2.4s ease-out infinite; }
+  .health.healthy { color: var(--success); border-color: var(--success-border); background: var(--success-soft); }
+  .health.degraded .dot { background: var(--warn-dot); }
+  .health.degraded { color: #92400e; border-color: #fde68a; background: #fffbeb; }
+  .health.unhealthy .dot { background: var(--error-dot); }
+  .health.unhealthy { color: var(--error); border-color: var(--error-border); background: var(--error-soft); }
+
+  @keyframes pulse-dot {
+    0% { box-shadow: 0 0 0 0 rgba(22,163,74,0.5); }
+    100% { box-shadow: 0 0 0 8px rgba(22,163,74,0); }
+  }
+
+  /* ─────────────  cards  ───────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color var(--t-fast);
+  }
+
+  .card-hero {
+    background: linear-gradient(180deg, #ffffff 0%, #fafaf9 100%);
+  }
+
+  .label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .label svg { width: 12px; height: 12px; opacity: 0.8; }
+
+  /* ─────────────  ask  ───────────── */
+  .ask-wrap {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+  textarea#question {
+    flex: 1;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface);
+    resize: none;
+    transition: border-color var(--t-fast), box-shadow var(--t-fast);
+    min-height: 48px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  textarea#question::placeholder { color: var(--muted-2); }
+  textarea#question:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--shadow-focus);
+  }
+
+  .icon-btn-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    width: 48px;
+    display: grid; place-items: center;
+    cursor: pointer;
+    transition: background var(--t-fast), transform var(--t-fast);
+    flex-shrink: 0;
+  }
+  .icon-btn-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+  .icon-btn-primary:active:not(:disabled) { transform: scale(0.96); }
+  .icon-btn-primary:disabled {
+    background: var(--muted-2);
+    cursor: not-allowed;
+  }
+  .icon-btn-primary svg { width: 18px; height: 18px; transition: transform var(--t-med); }
+  .icon-btn-primary.loading svg { animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* suggestions row */
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+    align-items: center;
+  }
+  .suggestions-label {
+    font-size: 12px;
+    color: var(--muted-2);
+    margin-right: 4px;
+  }
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
+    font-family: inherit;
+  }
+  .chip:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-soft);
+    color: var(--accent);
+  }
+
+  /* ─────────────  answer  ───────────── */
+  .answer-card {
+    display: none;
+    animation: slide-up 320ms cubic-bezier(.16,1,.3,1) both;
+  }
+  .answer-card.visible { display: block; }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .answer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .answer-head .label { margin-bottom: 0; }
+
+  .copy-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--muted);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all var(--t-fast);
+    font-family: inherit;
+  }
+  .copy-btn:hover { color: var(--accent); background: var(--bg-soft); border-color: var(--border); }
+  .copy-btn svg { width: 13px; height: 13px; }
+  .copy-btn.copied { color: var(--success); }
+
+  .answer-text {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--text);
+    margin: 0 0 18px;
+  }
+
+  .source-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    margin: 0 2px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: background var(--t-fast), transform var(--t-fast);
+    vertical-align: 1px;
+    user-select: none;
+  }
+  .source-pill:hover, .source-pill.active {
+    background: var(--accent);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  /* sources list */
+  .sources {
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+  .sources-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .source-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+    font-size: 13px;
+    transition: all var(--t-fast);
+    cursor: default;
+  }
+  .source-row:hover, .source-row.active {
+    background: var(--accent-soft);
+    border-color: var(--accent-tint);
+  }
+  .source-num {
+    display: grid; place-items: center;
+    width: 22px; height: 22px;
+    background: var(--accent);
+    color: white;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .source-name {
+    flex: 1;
+    color: var(--text-2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .source-score {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    background: var(--bg);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  /* meta row */
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  .meta-row .meta-k { color: var(--muted-2); margin-right: 4px; }
+  .meta-row .meta-v { color: var(--text-2); font-weight: 500; }
+  .meta-row .meta-cached { color: var(--success); font-weight: 500; }
+
+  /* ─────────────  ingest  ───────────── */
+  .ingest-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+  input[type=text]#ingest-path {
+    flex: 1;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color var(--t-fast), box-shadow var(--t-fast);
+    font-variant-numeric: tabular-nums;
+  }
+  input[type=text]#ingest-path:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--shadow-focus);
+  }
+  .checkbox-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--muted);
+    padding: 0 8px;
+    user-select: none;
+    cursor: pointer;
+  }
+  .checkbox-wrap input { accent-color: var(--accent); }
+
+  /* ─────────────  status  ───────────── */
+  .status {
+    display: none;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    margin-top: 12px;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.45;
+  }
+  .status.visible { display: flex; }
+  .status svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .status.success { background: var(--success-soft); color: var(--success); border: 1px solid var(--success-border); }
+  .status.error { background: var(--error-soft); color: var(--error); border: 1px solid var(--error-border); }
+  .status.info { background: var(--bg-soft); color: var(--muted); border: 1px solid var(--border); }
+
+  /* ─────────────  footer  ───────────── */
+  .footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    align-items: center;
+  }
+  .footer .stat-k { color: var(--muted-2); }
+  .footer .stat-v { color: var(--text-2); font-weight: 500; }
+  .footer .kbd-hint { margin-left: auto; color: var(--muted-2); }
+  .kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--text-2);
+    line-height: 1.3;
+  }
+
+  /* ─────────────  toast  ───────────── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translate(-50%, 60px);
+    background: var(--accent);
+    color: white;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    opacity: 0;
+    pointer-events: none;
+    transition: all var(--t-med);
+    z-index: 100;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .toast svg { width: 14px; height: 14px; }
+  .toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 32px 18px 56px; }
+    .ingest-row { flex-direction: column; }
+    .checkbox-wrap { padding: 6px 0 0; }
+    .footer .kbd-hint { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- header -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark">L</div>
+      <div class="brand-text">
+        <h1>LegalMind</h1>
+        <div class="sub">RAG over your legal documents</div>
+      </div>
+    </div>
+    <div id="health" class="health">
+      <span class="dot"></span><span id="health-text">connecting</span>
+    </div>
+  </header>
+
+  <!-- ask -->
+  <section class="card card-hero">
+    <div class="label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      Ask
+    </div>
+    <div class="ask-wrap">
+      <textarea id="question"
+        rows="1"
+        placeholder="What does the contract say about termination?"
+        autofocus></textarea>
+      <button id="ask-btn" class="icon-btn-primary" type="button" aria-label="Ask">
+        <svg id="ask-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/><path d="m13 5 7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+    <div class="suggestions" id="suggestions">
+      <span class="suggestions-label">Try:</span>
+      <button class="chip" type="button" data-q="What is the penalty for late delivery?">Penalty clause</button>
+      <button class="chip" type="button" data-q="Summarize the termination conditions">Termination</button>
+      <button class="chip" type="button" data-q="Explain the force majeure provision">Force majeure</button>
+      <button class="chip" type="button" data-q="What are the payment terms?">Payment terms</button>
+    </div>
+    <div id="ask-status" class="status"></div>
+  </section>
+
+  <!-- answer -->
+  <section id="answer-card" class="card answer-card">
+    <div class="answer-head">
+      <div class="label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="m16.24 16.24 2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="m16.24 7.76 2.83-2.83"/></svg>
+        Answer
+      </div>
+      <button id="copy-btn" class="copy-btn" type="button">
+        <svg id="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span id="copy-label">Copy</span>
+      </button>
+    </div>
+    <div id="answer-text" class="answer-text"></div>
+    <div id="sources" class="sources" style="display:none;"></div>
+    <div id="meta-row" class="meta-row"></div>
+  </section>
+
+  <!-- ingest -->
+  <section class="card">
+    <div class="label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      Add documents
+    </div>
+    <div class="ingest-row">
+      <input id="ingest-path" type="text"
+        placeholder="./data/raw or ./data/raw/file.pdf or https://..."
+        value="./data/raw" />
+      <label class="checkbox-wrap">
+        <input type="checkbox" id="recursive" checked />
+        recursive
+      </label>
+      <button id="ingest-btn" class="icon-btn-primary" type="button" aria-label="Ingest" style="width:auto; padding: 0 18px; gap: 6px;">
+        <svg id="ingest-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        <span style="font-weight:500;font-size:14px;">Ingest</span>
+      </button>
+    </div>
+    <div id="ingest-status" class="status"></div>
+  </section>
+
+  <!-- footer -->
+  <footer class="footer">
+    <span><span class="stat-k">model</span> <span class="stat-v" id="stat-model">—</span></span>
+    <span><span class="stat-k">embeddings</span> <span class="stat-v" id="stat-embed">—</span></span>
+    <span><span class="stat-k">vectors</span> <span class="stat-v" id="stat-vectors">—</span></span>
+    <span><span class="stat-k">top_k</span> <span class="stat-v" id="stat-topk">—</span></span>
+    <span class="kbd-hint"><span class="kbd">⌘</span> + <span class="kbd">↵</span> to ask</span>
+  </footer>
+
+</div>
+
+<!-- toast -->
+<div id="toast" class="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">Copied</span>
+</div>
+
+<script>
+  const API = '/api/v1';
+
+  const $ = (id) => document.getElementById(id);
+  const escapeHtml = (s) => String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  // SVG icons used in status messages
+  const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  const ICON_ALERT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+  const ICON_DOTS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>';
+
+  function setStatus(el, kind, text, icon) {
+    el.className = 'status visible ' + kind;
+    el.innerHTML = (icon || '') + '<span>' + escapeHtml(text) + '</span>';
+  }
+  function clearStatus(el) {
+    el.className = 'status';
+    el.innerHTML = '';
+  }
+
+  // toast
+  let toastTimer = null;
+  function showToast(text) {
+    $('toast-text').textContent = text;
+    const t = $('toast');
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  // auto-resize textarea
+  const ta = $('question');
+  function autoResize() {
+    ta.style.height = 'auto';
+    ta.style.height = Math.min(200, ta.scrollHeight) + 'px';
+  }
+  ta.addEventListener('input', autoResize);
+
+  // health + stats
+  async function refreshStats() {
+    try {
+      const [statsRes, healthRes] = await Promise.all([
+        fetch(API + '/stats').then(r => r.json()),
+        fetch(API + '/health').then(r => r.json()),
+      ]);
+      $('stat-model').textContent = statsRes.llm_model || '—';
+      $('stat-embed').textContent = statsRes.embedding_model || '—';
+      $('stat-vectors').textContent = statsRes.total_vectors ?? '—';
+      $('stat-topk').textContent = statsRes.top_k ?? '—';
+
+      const h = $('health');
+      const status = healthRes.status || 'unknown';
+      h.className = 'health ' + status;
+      $('health-text').textContent = status;
+    } catch (e) {
+      const h = $('health');
+      h.className = 'health unhealthy';
+      $('health-text').textContent = 'offline';
+    }
+  }
+
+  // render answer with hover-linked source pills
+  function renderAnswer(text) {
+    const safe = escapeHtml(text);
+    return safe.replace(
+      /\[Source\s+(\d+)(?:[^\]]*)?\]/gi,
+      (_, n) => `<span class="source-pill" data-src="${n}" tabindex="0" title="Source ${n}">${n}</span>`
+    );
+  }
+
+  function renderSources(sources) {
+    if (!sources || sources.length === 0) {
+      $('sources').style.display = 'none';
+      $('sources').innerHTML = '';
+      return;
+    }
+    const items = sources.map(s => `
+      <div class="source-row" data-src="${s.source_index}">
+        <span class="source-num">${escapeHtml(String(s.source_index))}</span>
+        <span class="source-name">${escapeHtml(s.filename || 'unknown')}</span>
+        <span class="source-score">${(s.similarity_score * 100).toFixed(0)}%</span>
+      </div>
+    `).join('');
+    const el = $('sources');
+    el.style.display = 'block';
+    el.innerHTML = `<div class="sources-title">Sources</div>${items}`;
+  }
+
+  // hover-link [N] pills with their source rows
+  function wireSourceHover(scope) {
+    const handler = (sel, idx, on) => {
+      scope.querySelectorAll(`${sel}[data-src="${idx}"]`).forEach(el => {
+        el.classList.toggle('active', on);
+      });
+    };
+    scope.addEventListener('mouseover', e => {
+      const t = e.target.closest('[data-src]');
+      if (!t) return;
+      const idx = t.getAttribute('data-src');
+      handler('.source-pill', idx, true);
+      handler('.source-row', idx, true);
+    });
+    scope.addEventListener('mouseout', e => {
+      const t = e.target.closest('[data-src]');
+      if (!t) return;
+      const idx = t.getAttribute('data-src');
+      handler('.source-pill', idx, false);
+      handler('.source-row', idx, false);
+    });
+  }
+
+  // ─── ask ───
+  let lastAnswer = '';
+
+  async function ask() {
+    const q = ta.value.trim();
+    if (!q) return;
+
+    const askBtn = $('ask-btn');
+    const askIcon = $('ask-icon');
+    const statusEl = $('ask-status');
+    const answerCard = $('answer-card');
+
+    askBtn.disabled = true;
+    askBtn.classList.add('loading');
+    askIcon.innerHTML = '<path d="M21 12a9 9 0 1 1-6.2-8.5"/>';
+    setStatus(statusEl, 'info', 'Embedding query, searching, generating', ICON_DOTS);
+
+    try {
+      const res = await fetch(API + '/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+
+      lastAnswer = data.answer || '';
+      $('answer-text').innerHTML = renderAnswer(lastAnswer);
+      renderSources(data.sources);
+      $('meta-row').innerHTML = `
+        <span><span class="meta-k">retrieved</span><span class="meta-v">${data.retrieval_count}</span></span>
+        <span><span class="meta-k">tokens</span><span class="meta-v">${data.total_tokens}</span></span>
+        <span><span class="meta-k">latency</span><span class="meta-v">${Math.round(data.latency_ms)}ms</span></span>
+        ${data.cached ? '<span class="meta-cached">cached</span>' : ''}
+      `;
+      answerCard.classList.add('visible');
+      clearStatus(statusEl);
+      // smooth scroll the answer into view
+      requestAnimationFrame(() => {
+        answerCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+      refreshStats();
+    } catch (err) {
+      setStatus(statusEl, 'error', err.message || 'Request failed', ICON_ALERT);
+      answerCard.classList.remove('visible');
+    } finally {
+      askBtn.disabled = false;
+      askBtn.classList.remove('loading');
+      askIcon.innerHTML = '<path d="M5 12h14"/><path d="m13 5 7 7-7 7"/>';
+    }
+  }
+
+  // ─── ingest ───
+  async function ingest() {
+    const path = $('ingest-path').value.trim();
+    if (!path) return;
+
+    const btn = $('ingest-btn');
+    const icon = $('ingest-icon');
+    const statusEl = $('ingest-status');
+    btn.disabled = true;
+    btn.classList.add('loading');
+    icon.innerHTML = '<path d="M21 12a9 9 0 1 1-6.2-8.5"/>';
+    setStatus(statusEl, 'info', 'Loading, chunking, embedding', ICON_DOTS);
+
+    try {
+      const res = await fetch(API + '/ingest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          source_path: path,
+          recursive: $('recursive').checked
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+
+      setStatus(
+        statusEl, 'success',
+        `${data.documents_processed} doc(s) · ${data.chunks_created} chunks · ${data.vectors_upserted} vectors · ${data.duration_seconds}s`,
+        ICON_CHECK
+      );
+      refreshStats();
+    } catch (err) {
+      setStatus(statusEl, 'error', err.message || 'Ingest failed', ICON_ALERT);
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      icon.innerHTML = '<path d="M5 12h14"/><path d="M12 5v14"/>';
+    }
+  }
+
+  // ─── copy answer ───
+  $('copy-btn').addEventListener('click', async () => {
+    if (!lastAnswer) return;
+    try {
+      await navigator.clipboard.writeText(lastAnswer);
+      const lbl = $('copy-label');
+      const btn = $('copy-btn');
+      btn.classList.add('copied');
+      lbl.textContent = 'Copied';
+      showToast('Answer copied to clipboard');
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        lbl.textContent = 'Copy';
+      }, 1600);
+    } catch (e) {
+      showToast('Copy failed');
+    }
+  });
+
+  // ─── wire up ───
+  $('ask-btn').addEventListener('click', ask);
+  $('ingest-btn').addEventListener('click', ingest);
+
+  // suggestion chips
+  document.querySelectorAll('.chip[data-q]').forEach(b => {
+    b.addEventListener('click', () => {
+      ta.value = b.getAttribute('data-q');
+      autoResize();
+      ta.focus();
+      ask();
+    });
+  });
+
+  // Cmd/Ctrl + Enter to ask
+  ta.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      ask();
+    }
+  });
+
+  // hover link in answer card
+  wireSourceHover($('answer-card'));
+
+  // boot
+  refreshStats();
+  setInterval(refreshStats, 15000);  // gentle background refresh
+</script>
+
+</body>
+</html>
