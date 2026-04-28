@@ -261,11 +261,11 @@ graph LR
     GEN  --> UTL
     RET  --> GEN
 
-    class ING  ingStyle
-    class RET  retStyle
-    class GEN  genStyle
+    class ING ingStyle
+    class RET retStyle
+    class GEN genStyle
     class API2 apiStyle
-    class UTL  utlStyle
+    class UTL utlStyle
 ```
 
 ---
